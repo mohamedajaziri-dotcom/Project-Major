@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { prisma } from '@/lib/prisma'
 import { parseDate } from '@/lib/date-utils'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   try {
     const supabase = createClient()
