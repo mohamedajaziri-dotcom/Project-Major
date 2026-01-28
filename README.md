@@ -10,7 +10,11 @@ npm run dev
 ```
 Then open **[http://localhost:3000](http://localhost:3000)** in your browser!
 
-**First time here?** See the **[📖 Getting Started Guide](GETTING_STARTED.md)** for a complete walkthrough (10 minutes).
+### 📚 Documentation
+
+- **[📖 Getting Started Guide](GETTING_STARTED.md)** - Complete setup walkthrough (10 minutes)
+- **[🎨 Visual Guide](VISUAL_GUIDE.md)** - See what the app looks like
+- **[⚡ Quick Reference](QUICK_REFERENCE.md)** - Essential commands & troubleshooting
 
 **Don't have Supabase credentials yet?** Follow the [detailed setup instructions](#setup-instructions) below.
 
