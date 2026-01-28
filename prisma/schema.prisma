@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions     Session[]
+  dailyCheckins DailyCheckin[]
+  weeklyQuests  WeeklyQuest[]
+  tasks         Task[]
+  userStats     UserStats?
+
+  @@map("users")
+}
+
+model Session {
+  id              String   @id @default(uuid())
+  userId          String
+  startTime       DateTime
+  endTime         DateTime
+  durationMinutes Int
+  leverageType    String   // "HL", "MT", "LL"
+  context         String?  // e.g., "deep work", "learning", "admin"
+  taskId          String?
+  note            String?
+  xpEarned        Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id])
+
+  @@index([userId, startTime])
+  @@index([leverageType])
+  @@map("sessions")
+}
+
+model DailyCheckin {
+  id        String   @id @default(uuid())
+  userId    String
+  date      DateTime @db.Date
+  energy    Int      // 1-10
+  note      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@map("daily_checkins")
+}
+
+model WeeklyQuest {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  description String?
+  weekStart   DateTime @db.Date
+  targetHours Int      @default(0)
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasks Task[]
+
+  @@index([userId, weekStart])
+  @@map("weekly_quests")
+}
+
+model Task {
+  id            String   @id @default(uuid())
+  userId        String
+  questId       String?
+  title         String
+  description   String?
+  leverageType  String   // "HL", "MT", "LL"
+  estimatedMins Int?
+  completed     Boolean  @default(false)
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest    WeeklyQuest? @relation(fields: [questId], references: [id])
+  sessions Session[]
+
+  @@index([userId, completed])
+  @@index([leverageType])
+  @@map("tasks")
+}
+
+model UserStats {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  totalXP         Int      @default(0)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  coins           Int      @default(0)
+  weeklyHLTarget  Int      @default(10) // Target HL hours per week
+  lastStreakDate  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_stats")
+}
