@@ -52,7 +52,7 @@ export default function FocusPage() {
     const actualMinutes = Math.round((endTime.getTime() - startTime.getTime()) / 60000)
 
     try {
-      await fetch('/api/sessions', {
+      const res = await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -65,11 +65,15 @@ export default function FocusPage() {
         }),
       })
       
+      if (!res.ok) {
+        throw new Error('Failed to log session')
+      }
+      
       alert(`🎉 Session complete! ${actualMinutes} minutes of ${leverageType} work logged.`)
       router.push('/')
     } catch (error) {
       console.error('Failed to log session:', error)
-      alert('Failed to log session')
+      alert('Failed to log session. Please try again.')
     }
   }
 

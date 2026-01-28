@@ -14,22 +14,27 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (!error && data.user) {
-      // Create user in our database if not exists
-      await prisma.user.upsert({
-        where: { email: data.user.email! },
-        update: {},
-        create: {
-          id: data.user.id,
-          email: data.user.email!,
-          userStats: {
-            create: {
-              weeklyHLTarget: 10,
+      try {
+        // Create user in our database if not exists
+        await prisma.user.upsert({
+          where: { email: data.user.email! },
+          update: {},
+          create: {
+            id: data.user.id,
+            email: data.user.email!,
+            userStats: {
+              create: {
+                weeklyHLTarget: 10,
+              }
             }
-          }
-        },
-      })
-      
-      return NextResponse.redirect(`${origin}${next}`)
+          },
+        })
+        
+        return NextResponse.redirect(`${origin}${next}`)
+      } catch (dbError) {
+        console.error('Failed to create user in database:', dbError)
+        return NextResponse.redirect(`${origin}/login?error=database_error`)
+      }
     }
   }
 

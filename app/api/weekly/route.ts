@@ -63,11 +63,11 @@ export async function GET(request: Request) {
 
     // Get today's XP
     const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999)
     const todaySessions = sessions.filter((s) => {
-      const sessionDate = new Date(s.startTime)
-      sessionDate.setHours(0, 0, 0, 0)
-      return sessionDate.getTime() === today.getTime()
+      const sessionTime = new Date(s.startTime)
+      return sessionTime >= todayStart && sessionTime <= todayEnd
     })
     const xpToday = todaySessions.reduce((sum, s) => sum + s.xpEarned, 0)
 
@@ -132,7 +132,7 @@ export async function GET(request: Request) {
   } catch (error: any) {
     console.error('Error fetching weekly stats:', error)
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Failed to fetch weekly statistics. Please try again.' },
       { status: 500 }
     )
   }

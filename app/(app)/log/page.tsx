@@ -25,7 +25,7 @@ export default function LogPage() {
       const endTime = new Date()
       const startTime = new Date(endTime.getTime() - minutes * 60000)
 
-      await fetch('/api/sessions', {
+      const res = await fetch('/api/sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -38,11 +38,15 @@ export default function LogPage() {
         }),
       })
 
+      if (!res.ok) {
+        throw new Error('Failed to log session')
+      }
+
       alert(`✅ Logged ${minutes} minutes of ${leverageType} work!`)
       router.push('/')
     } catch (error) {
       console.error('Failed to log session:', error)
-      alert('Failed to log session')
+      alert('Failed to log session. Please try again.')
     } finally {
       setSubmitting(false)
     }

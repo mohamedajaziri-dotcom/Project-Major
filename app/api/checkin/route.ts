@@ -20,15 +20,23 @@ export async function POST(request: Request) {
     // Validate required fields
     if (!date || !energy) {
       return NextResponse.json(
-        { error: 'Missing required fields (date, energy)' },
+        { error: 'Missing required fields: date, energy' },
+        { status: 400 }
+      )
+    }
+
+    // Validate date format (YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return NextResponse.json(
+        { error: 'Invalid date format. Expected YYYY-MM-DD' },
         { status: 400 }
       )
     }
 
     // Validate energy range
-    if (energy < 1 || energy > 10) {
+    if (energy < 1 || energy > 10 || !Number.isInteger(energy)) {
       return NextResponse.json(
-        { error: 'Energy must be between 1 and 10' },
+        { error: 'Energy must be an integer between 1 and 10' },
         { status: 400 }
       )
     }
@@ -57,7 +65,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Error creating check-in:', error)
     return NextResponse.json(
-      { error: error.message || 'Internal server error' },
+      { error: 'Failed to save check-in. Please try again.' },
       { status: 500 }
     )
   }

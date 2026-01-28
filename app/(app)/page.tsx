@@ -42,16 +42,26 @@ export default function Home() {
     try {
       const today = new Date().toISOString().split('T')[0]
       const res = await fetch(`/api/weekly?weekStart=${today}`)
-      if (res.ok) {
-        const data = await res.json()
-        setWeeklyStats(data)
-        setStreak(data.streak || 0)
-        setCoins(data.coins || 0)
-        setXpToday(data.xpToday || 0)
-        setQuests(data.quests || [])
+      if (!res.ok) {
+        throw new Error('Failed to fetch weekly stats')
       }
+      const data = await res.json()
+      setWeeklyStats(data)
+      setStreak(data.streak || 0)
+      setCoins(data.coins || 0)
+      setXpToday(data.xpToday || 0)
+      setQuests(data.quests || [])
     } catch (error) {
       console.error('Failed to fetch weekly stats:', error)
+      // Show error state but don't block the UI
+      setWeeklyStats({
+        weekStart: '',
+        weekEnd: '',
+        hlHours: 0,
+        target: 10,
+        remaining: 10,
+        xpThisWeek: 0,
+      })
     } finally {
       setLoading(false)
     }
@@ -60,15 +70,20 @@ export default function Home() {
   const saveEnergy = async () => {
     try {
       const today = new Date().toISOString().split('T')[0]
-      await fetch('/api/checkin', {
+      const res = await fetch('/api/checkin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ date: today, energy }),
       })
+      
+      if (!res.ok) {
+        throw new Error('Failed to save energy level')
+      }
+      
       alert('Energy level saved!')
     } catch (error) {
       console.error('Failed to save energy:', error)
-      alert('Failed to save energy level')
+      alert('Failed to save energy level. Please try again.')
     }
   }
 
