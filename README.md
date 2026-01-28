@@ -2,6 +2,20 @@
 
 A high-leverage work tracking application built with Next.js, TypeScript, Tailwind CSS, Supabase, and Prisma.
 
+## 🚀 Quick Start - How to Access the Application
+
+**Already have everything set up?** Just run:
+```bash
+npm run dev
+```
+Then open **[http://localhost:3000](http://localhost:3000)** in your browser!
+
+**First time here?** See the **[📖 Getting Started Guide](GETTING_STARTED.md)** for a complete walkthrough (10 minutes).
+
+**Don't have Supabase credentials yet?** Follow the [detailed setup instructions](#setup-instructions) below.
+
+---
+
 ## Features
 
 - 🚀 Track high-leverage (HL), maintenance (MT), and low-leverage (LL) work sessions
@@ -84,7 +98,50 @@ npx prisma db push
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+**🎉 Your app is now running!** Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 7. First-time user flow
+
+1. You'll see the login page at `http://localhost:3000/login`
+2. Click **"Don't have an account? Sign up"**
+3. Enter your email and password to create an account
+4. Check your email for the confirmation link (click it to verify)
+5. Return to the login page and sign in
+6. You'll be redirected to the home dashboard at `http://localhost:3000`
+
+**🎯 Start tracking your high-leverage work!**
+
+---
+
+## 🛠️ Troubleshooting
+
+### "Can't connect to the application"
+- Make sure the dev server is running: `npm run dev`
+- Check that you're accessing `http://localhost:3000`
+- Verify no other app is using port 3000
+
+### "Database connection error"
+- Verify your `DATABASE_URL` and `DIRECT_URL` in `.env.local`
+- Make sure you ran `npx prisma db push`
+- Check your Supabase database is active
+
+### "Authentication not working"
+- Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are correct
+- Check email confirmation if signing up for the first time
+- Clear browser cache and cookies
+
+### "Build fails"
+- Delete `node_modules` and `package-lock.json`
+- Run `npm install` again
+- Make sure you're using Node.js 18+
+
+### Need help?
+Open an issue on GitHub with:
+- Error message
+- Steps you've taken
+- Your Node.js version (`node --version`)
+
+---
 
 ## Project Structure
 
